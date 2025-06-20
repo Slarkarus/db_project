@@ -1,0 +1,41 @@
+Table students {
+  id SERIAL [pk]
+  name VARCHAR(100) [not null]
+  email VARCHAR(100)
+}
+
+Table projects {
+  id SERIAL [pk]
+  year INTEGER [not null]
+  url TEXT [not null, unique]
+}
+
+Table project_assignments {
+  student_id INTEGER [ref: > students.id, not null]
+  project_id INTEGER [ref: > projects.id, not null]
+  indexes {
+    (student_id, project_id) [pk]
+  }
+}
+
+Table contents {
+  id SERIAL [pk]
+  hash TEXT [not null, unique]
+  content BYTEA
+}
+
+Table files {
+  id SERIAL [pk]
+  path TEXT [not null]
+  project_id INTEGER [ref: > projects.id, not null]
+  content_id INTEGER [ref: > contents.id, not null]
+  indexes {
+    (project_id, path) [unique]
+  }
+}
+
+
+Ref: project_assignments.student_id - students.id [delete: cascade]
+Ref: project_assignments.project_id - projects.id [delete: cascade]
+Ref: files.project_id - projects.id [delete: cascade]
+Ref: files.content_id - contents.id [delete: cascade]
